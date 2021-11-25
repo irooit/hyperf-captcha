@@ -23,6 +23,12 @@ class ConfigProvider
                     'source' => __DIR__ . '/../publish/hi_captcha.php',
                     'destination' => BASE_PATH . '/config/autoload/hi_captcha.php',
                 ],
+                [
+                    'id' => 'fonts',
+                    'description' => 'The fonts for Irooit/hyperf-captcha.',
+                    'source' => __DIR__ . '/../publish/fonts',
+                    'destination' => BASE_PATH . '/storage/fonts',
+                ],
             ]
         ];
     }

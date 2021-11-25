@@ -1,23 +1,23 @@
 <?php
+
+declare(strict_types=1);
 /**
- * DESCRIPTION:
- * DATE: 2021/11/25
- * TIME: 2:09 下午
- * AUTHOR: hongcoo
- * PROJECT: tuoke_api
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Irooit\Captcha;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use HyperfExt\Encryption\Crypt;
 use Intervention\Image\Gd\Font;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
-use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class CaptchaFactory
@@ -174,10 +174,6 @@ class CaptchaFactory
      */
     protected $encrypt = true;
 
-    /**
-     * @param ConfigInterface $config
-     * @param CacheInterface $cache
-     */
     public function __construct(ConfigInterface $config, CacheInterface $cache, ImageManager $imageManager, Image $image, Filesystem $files)
     {
         $this->config = $config->get('hi_captcha');
@@ -198,7 +194,7 @@ class CaptchaFactory
      */
     public function make(string $type = 'default', bool $api = true)
     {
-        $type = !empty($type) ? $type : 'default';
+        $type = ! empty($type) ? $type : 'default';
         $this->configure($type);
         $this->backgrounds = $this->files->files(__DIR__ . '/../assets/backgrounds');
         $this->fonts = glob(realpath($this->config['fonts_dir']) . '/*.{ttf,otf}', GLOB_BRACE);
@@ -250,21 +246,19 @@ class CaptchaFactory
      * DESCRIPTION: 验证
      * DATE: 2021/11/25
      * TIME: 2:19 下午
-     * AUTHOR: hongcoo
+     * AUTHOR: hongcoo.
      * @param $value
      * @param $hashedValue
-     * @param array $options
-     * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @return bool
      */
-    public function validate($value, $hashedValue, array $options = [])
+    public function validate($value, $hashedValue, array $options = []): bool
     {
         try {
-            [$original, $expiresAt] = $this->deCrypt($key);
-
-            if ($original === strtolower($text)
+            [$original, $expiresAt] = $this->deCrypt($hashedValue);
+            if ($original === strtolower($value)
                 && $expiresAt >= time()
-                && $this->cache->get($cacheKey = $this->getCacheKey($key)) === null
+                && $this->cache->get($cacheKey = $this->getCacheKey($hashedValue)) === null
             ) {
                 $this->cache->set($cacheKey, $expiresAt, $expiresAt - time());
                 return true;
@@ -278,9 +272,7 @@ class CaptchaFactory
      * DESCRIPTION: 生成缓存密钥
      * DATE: 2021/11/25
      * TIME: 2:19 下午
-     * AUTHOR: hongcoo
-     * @param string $key
-     * @return string
+     * AUTHOR: hongcoo.
      */
     protected function getCacheKey(string $key): string
     {
@@ -291,9 +283,7 @@ class CaptchaFactory
      * DESCRIPTION: 解密
      * DATE: 2021/11/25
      * TIME: 2:20 下午
-     * AUTHOR: hongcoo
-     * @param string $key
-     * @return array
+     * AUTHOR: hongcoo.
      */
     protected function deCrypt(string $key): array
     {
@@ -314,6 +304,7 @@ class CaptchaFactory
      * Generate captcha text.
      *
      * @throws Exception
+     * @throws \Exception
      */
     protected function generate(): array
     {
@@ -334,7 +325,7 @@ class CaptchaFactory
             $key = implode('', $bag);
         }
 
-        $hash = $this->enCrypt($key, $this->expire);
+        $hash = $this->enCrypt($key, time() + $this->expire);
 
         /*$this->cache->set('captcha', [
             'sensitive' => $this->sensitive,
