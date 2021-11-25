@@ -11,7 +11,9 @@ namespace Irooit\Captcha\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
+use Irooit\Captcha\CaptchaFactory;
 
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
@@ -31,7 +33,7 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 
     public function process(object $event)
     {
-        /** @var \Hyperf\Validation\Contract\ValidatorFactoryInterface $validatorFactory */
+        /**  @var ValidatorFactoryInterface $validatorFactory */
         $validatorFactory = $event->validatorFactory;
 
         $validatorFactory->extend('captcha', function ($attribute, $value, $parameters, $validator) {

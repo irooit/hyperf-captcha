@@ -11,11 +11,16 @@ declare(strict_types=1);
  */
 namespace Irooit\Captcha;
 
+use Irooit\Captcha\Listener\ValidatorFactoryResolvedListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'listeners' => [
+                ValidatorFactoryResolvedListener::class,
+            ],
             'publish' => [
                 [
                     'id' => 'config',
