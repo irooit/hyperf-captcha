@@ -7,7 +7,7 @@
  * PROJECT: tuoke_api
  */
 
-namespace Irooit\Captcha;
+namespace Irooit\Captcha\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Utils\ApplicationContext;
